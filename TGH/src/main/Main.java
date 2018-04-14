@@ -9,8 +9,8 @@ import java.util.Scanner;
  * @author Minaj
  */
 public class Main {
-    private static ArrayList<Vrchol> vrcholy;
     private static ArrayList<Vrchol> graf;
+    //private static ArrayList<Vrchol> graf;
     private static ArrayList<Vrchol> nextVisit;
     private static ArrayList<Vrchol> visited;
     private static ArrayList<Dotaz> dotazy;
@@ -21,10 +21,9 @@ public class Main {
     
     
     public static void main(String[] args) {
-        vrcholy = new ArrayList<Vrchol>();
+        graf = new ArrayList<Vrchol>();
         dotazy = new ArrayList<Dotaz>();
         nextVisit = new ArrayList<Vrchol>();
-        graf = new ArrayList<Vrchol>();
         visited = new ArrayList<Vrchol>();
         cesta = new ArrayList<Integer>();
         
@@ -32,15 +31,15 @@ public class Main {
         m = scan.nextInt(); // počet hran - rádiové spojení
         
         for (int i = 0; i < n; i++){
-            vrcholy.add(new Vrchol(i));
+            graf.add(new Vrchol(i));
         }
         
         for (int i = 0; i < m; i++){
             int a = scan.nextInt();
             int b = scan.nextInt();
             float p = scan.nextFloat();
-            vrcholy.get(a).setSoused(new Hrana(vrcholy.get(b), p));
-            vrcholy.get(b).setSoused(new Hrana(vrcholy.get(a), p));
+            graf.get(a).setSoused(new Hrana(graf.get(b), p));
+            graf.get(b).setSoused(new Hrana(graf.get(a), p));
         }
         
         N = scan.nextInt();
@@ -59,9 +58,8 @@ public class Main {
         float pp; // Pravděpodobnost předka
         int ids; // ID Souseda
         Vrchol curr;
-        graf.clear();
-        for (Vrchol v : vrcholy){
-            graf.add(v.clone());
+        for (Vrchol v : graf){
+            v.setDefault();
         }
         
         nextVisit.clear();
@@ -114,13 +112,6 @@ public class Main {
             }
             
         });
-    }
-    
-    private static void vypisVrcholy(ArrayList<Vrchol> vrcholy) {
-        System.out.println("----------");
-        for (Vrchol v : vrcholy){
-            System.out.println("ID: " + v.getId() + ", H: " + v.getHodnota());
-        }
     }
 
     private static void vypisCestu() {
