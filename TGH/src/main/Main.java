@@ -4,36 +4,32 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Scanner;
-/**
- *
- * @author Minaj
- */
+
 public class Main {
     private static ArrayList<Vrchol> graf;
-    //private static ArrayList<Vrchol> graf;
     private static ArrayList<Vrchol> nextVisit;
     private static ArrayList<Vrchol> visited;
     private static ArrayList<Dotaz> dotazy;
     private static ArrayList<Integer> cesta;
-    
+
     private static int n, m, N;
     static Scanner scan = new Scanner(System.in);
-    
-    
+
+
     public static void main(String[] args) {
         graf = new ArrayList<Vrchol>();
         dotazy = new ArrayList<Dotaz>();
         nextVisit = new ArrayList<Vrchol>();
         visited = new ArrayList<Vrchol>();
         cesta = new ArrayList<Integer>();
-        
+
         n = scan.nextInt(); // počet vrcholů - uzel
         m = scan.nextInt(); // počet hran - rádiové spojení
-        
+
         for (int i = 0; i < n; i++){
             graf.add(new Vrchol(i));
         }
-        
+
         for (int i = 0; i < m; i++){
             int a = scan.nextInt();
             int b = scan.nextInt();
@@ -41,19 +37,18 @@ public class Main {
             graf.get(a).setSoused(new Hrana(graf.get(b), p));
             graf.get(b).setSoused(new Hrana(graf.get(a), p));
         }
-        
+
         N = scan.nextInt();
         for (int i = 0; i < N; i++){
             dotazy.add(new Dotaz(scan.nextInt(), scan.nextInt()));
         }
-       
-        
+
         for (Dotaz d : dotazy){
             DjikstruvAlgoritmus(d.getI(), d.getJ());
             vypisCestu();
         }
     }
-    
+
     private static void DjikstruvAlgoritmus(int i, int j) {
         float pp; // Pravděpodobnost předka
         int ids; // ID Souseda
@@ -61,21 +56,21 @@ public class Main {
         for (Vrchol v : graf){
             v.setDefault();
         }
-        
+
         nextVisit.clear();
         nextVisit.add(graf.get(i));
-        
+
         graf.get(i).setHodnota(1);
         graf.get(i).setPredek(graf.get(i));
-        
+
         visited.clear();
-        
+
         while (!nextVisit.isEmpty()){
             sortujPodleP(nextVisit);
             curr = nextVisit.remove(0);
             pp = curr.getHodnota();
             visited.add(curr);
-            
+
             for (int x = 0; x < curr.getSoused().size(); x++){
                 ids = curr.getSoused().get(x).getVrchol().getId();
                 if (!visited.contains(graf.get(ids))){
@@ -89,7 +84,7 @@ public class Main {
                 }
             }
         }
-        
+
         cesta.clear();
         curr = graf.get(j);
         if (graf.get(j).getPredek() == null){
@@ -103,14 +98,14 @@ public class Main {
         }
         Collections.reverse(cesta);
     }
-    
+
     private static void sortujPodleP(ArrayList<Vrchol> List) {
         Collections.sort(List, new Comparator<Vrchol>() {
             @Override
             public int compare(Vrchol o1, Vrchol o2) {
                 return o1.getHodnota() > o2.getHodnota() ? -1 : (o1.getHodnota() < o2.getHodnota()) ? 1 : 0;
             }
-            
+
         });
     }
 
@@ -127,7 +122,7 @@ class Vrchol {
     private float hodnota = -1;
     private Vrchol predek = null;
     private ArrayList<Hrana> soused = new ArrayList<Hrana>();
-    
+
     public Vrchol(int id) {
         this.id = id;
     }
@@ -147,19 +142,19 @@ class Vrchol {
     public ArrayList<Hrana> getSoused() {
         return soused;
     }
-    
+
     public void setPredek(Vrchol predek) {
         this.predek = predek;
     }
-    
+
     public float getHodnota() {
         return hodnota;
     }
-    
+
     public Vrchol getPredek() {
         return predek;
     }
-    
+
     public Vrchol clone(){
         Vrchol v = new Vrchol(id);
         for(Hrana h : soused){
@@ -167,6 +162,7 @@ class Vrchol {
         }
         return v;
     }
+
     public void setDefault(){
         this.hodnota = -1;
         this.predek = null;
@@ -176,7 +172,7 @@ class Vrchol {
 class Hrana {
     private Vrchol vrchol;  // kam
     private float p;    // pravdepodobnost
-    
+
     public Hrana(Vrchol vrchol, float p) {
         this.vrchol = vrchol;
         this.p = p;
@@ -185,7 +181,7 @@ class Hrana {
     public Vrchol getVrchol() {
         return vrchol;
     }
-    
+
     public float getP() {
         return p;
     }
