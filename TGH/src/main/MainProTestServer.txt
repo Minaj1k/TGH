@@ -1,4 +1,4 @@
-package main;
+package main;   // Odstranit při odevzdávání na TestServer
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -108,10 +108,10 @@ public class Main {
     }
 
     private static void vypisCestu() {
+        System.out.println();
         for(int i = 0; i < cesta.size(); i++){
             System.out.print(cesta.get(i)+" ");
         }
-        System.out.println();
     }
 }
 
