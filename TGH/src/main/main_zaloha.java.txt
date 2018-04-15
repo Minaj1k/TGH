@@ -1,19 +1,19 @@
-package main;
+package main;   // Odstranit při odevzdávání na TestServer
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.io.*;
 
-public class Main {
+public class main {
     private static ArrayList graf;
     private static ArrayList nextVisit;
-    private static ArrayList visited;
     private static ArrayList dotazy;
     private static ArrayList cesta;
     private static String[] line;
 
     private static int n, m, N;
+
 
     public static void main(String[] args) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
@@ -21,7 +21,6 @@ public class Main {
         graf = new ArrayList();
         dotazy = new ArrayList();
         nextVisit = new ArrayList();
-        visited = new ArrayList();
         cesta = new ArrayList();
 
         line = in.readLine().split(" ");
@@ -69,17 +68,15 @@ public class Main {
         ((Vrchol)graf.get(i)).setHodnota(1);
         ((Vrchol)graf.get(i)).setPredek(((Vrchol)graf.get(i)));
 
-        visited.clear();
-
         while (!nextVisit.isEmpty()){
             sortujPodleP(nextVisit);
             curr = (Vrchol)nextVisit.remove(0);
             pp = curr.getHodnota();
-            visited.add(curr);
-
+            curr.setVisited(true);
+            
             for (int x = 0; x < curr.getSoused().size(); x++){
                 ids = ((Hrana)curr.getSoused().get(x)).getVrchol().getId();
-                if (!visited.contains(graf.get(ids))){
+                if (!((Vrchol)graf.get(ids)).isVisited()){
                     if (!nextVisit.contains(graf.get(ids))){
                         nextVisit.add(graf.get(ids));
                     }
@@ -114,8 +111,9 @@ public class Main {
     }
 
     private static void vypisCestu() {
+        
         for(int i = 0; i < cesta.size(); i++){
-            System.out.print(cesta.get(i));
+            System.out.print(cesta.get(i)+" ");
         }
         System.out.println();
     }
@@ -124,6 +122,7 @@ public class Main {
 class Vrchol {
     private int id;
     private float hodnota = -1;
+    private boolean visited = false;
     private Vrchol predek = null;
     private ArrayList soused = new ArrayList();
 
@@ -159,9 +158,18 @@ class Vrchol {
         return predek;
     }
 
+    public boolean isVisited() {
+        return visited;
+    }
+
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+
     public void setDefault(){
         this.hodnota = -1;
         this.predek = null;
+        this.visited = false;
     }
 }
 
