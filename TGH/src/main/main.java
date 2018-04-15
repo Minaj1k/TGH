@@ -23,15 +23,18 @@ public class main {
         nextVisit = new ArrayList();
         cesta = new ArrayList();
 
+        // Načti počet vrcholů (n) a hran (m)
         line = in.readLine().split(" ");
         n = Integer.parseInt(line[0]);
         m = Integer.parseInt(line[1]);
         
 
+        // Vytvoř a vlož vrcholy do grafu
         for (int i = 0; i < n; i++){
             graf.add(new Vrchol(i));
         }
 
+        // Načti hrany - z (a), do (b), pravděpodobnost (p) - a vlož je daným vrcholům do pole "soused"
         for (int i = 0; i < m; i++){
             line = in.readLine().split(" ");
             int a = Integer.parseInt(line[0]);
@@ -41,13 +44,17 @@ public class main {
             ((Vrchol)graf.get(b)).setSoused(new Hrana(((Vrchol)graf.get(a)).getId(), p));
         }
 
+        // Načti počet dotazů
         line = in.readLine().split(" ");
         N = Integer.parseInt(line[0]);
+        
+        // Načti konkrétní dotazy - z, do
         for (int i = 0; i < N; i++){
             line = in.readLine().split(" ");
             dotazy.add(new Dotaz(Integer.parseInt(line[0]), Integer.parseInt(line[1])));
         }
 
+        // Pro každý dotaz spusť Djikstrův algoritmus (upravený) a vypiš cestu ze startovního vrcholu do cílového vrcholu
         for (int i = 0; i < dotazy.size(); i++){
             DjikstruvAlgoritmus(((Dotaz)dotazy.get(i)).getI(), ((Dotaz)dotazy.get(i)).getJ());
             vypisCestu();
@@ -55,33 +62,42 @@ public class main {
     }
 
     private static void DjikstruvAlgoritmus(int i, int j) {
-        float pp; // Pravděpodobnost předka
-        int ids; // ID Souseda
-        Vrchol curr;
-        for (int x = 0; x < graf.size(); x++){
+        float pp;       // Pravděpodobnost předka
+        int ids;        // ID Souseda
+        Vrchol curr;    // Vrchol s největší pravděpodobností => první v pořádníku
+        
+        // Nastav všem vrcholům v grafu defaultní nastavení (předek, navštíven, v pořadníku)
+        for (int x = 0; x < graf.size(); x++){  
             ((Vrchol)graf.get(x)).setDefault();
         }
 
+        // Vymaž pořadník a vlož startovní vrchol do pořadníku
         nextVisit.clear();
         nextVisit.add(graf.get(i));
 
-        ((Vrchol)graf.get(i)).setHodnota(1);
+        // Nastav startovnímu vrcholu hodnotu a předka
+        ((Vrchol)graf.get(i)).setHodnota(1);    
         ((Vrchol)graf.get(i)).setPredek(((Vrchol)graf.get(i)).getId());
 
+        // Najdi nejkratší cestu v grafu
         while (!nextVisit.isEmpty()){
-            sortujPodleP(nextVisit);
-            curr = (Vrchol)nextVisit.remove(0);
-            pp = curr.getHodnota();
-            curr.setVisited(true);
+            sortujPodleP(nextVisit);    // Seřaď pořadník podle hodnoty vrcholu
+            curr = (Vrchol)nextVisit.remove(0); // Vyjmi vrchol s nejlepší pravděpodobností (první v pořadníku)
+            pp = curr.getHodnota(); // Ulož hodnotu vrcholu
+            curr.setVisited(true);  // Nastav vrcholu status "navštívený"
             
+            // Vyhledej všechny sousedy vrcholu
             for (int x = 0; x < curr.getSoused().size(); x++){
-                //ids = ((Hrana)curr.getSoused().get(x)).getVrchol().getId();
-                ids = ((Hrana)curr.getSoused().get(x)).getId();
+                ids = ((Hrana)curr.getSoused().get(x)).getId(); // Ulož ID sousedního vrcholu
+                
+                // Pokračuj pokud vrchol NEBYL navštíven
                 if (!((Vrchol)graf.get(ids)).isVisited()){
+                    // Přidej sousední vrchol do pořadníku, pokud tam už není a nastav mu status "přidán do pořadníku"
                     if (!((Vrchol)graf.get(ids)).isAdded()){
                         nextVisit.add(graf.get(ids));
                         ((Vrchol)graf.get(ids)).setAdded(true);
                     }
+                    // Pokud je cesta k sousednímu vrcholu menší, než jinudy, nastav mu novou hodnotu a předka
                     if (((Vrchol)graf.get(ids)).getHodnota() < (((Hrana)curr.getSoused().get(x)).getP()*pp)){
                         ((Vrchol)graf.get(ids)).setHodnota(((Hrana)curr.getSoused().get(x)).getP()*pp);
                         ((Vrchol)graf.get(ids)).setPredek(curr.getId());
@@ -90,6 +106,7 @@ public class main {
             }
         }
 
+        // Vymaž cestu, vlož cílový vrchol a postupně do pole přidávej předky
         cesta.clear();
         curr = ((Vrchol)graf.get(j));
         if (((Vrchol)graf.get(j)).getPredek() == -1){
@@ -101,7 +118,6 @@ public class main {
                 curr = ((Vrchol)graf.get(curr.getPredek()));
             }
         }
-        //Collections.reverse(cesta);
     }
 
     private static void sortujPodleP(ArrayList List) {
