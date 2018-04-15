@@ -1,7 +1,7 @@
 # Teorige grafů a her 2018
 
 ## Zadání
-###2.6 Nejspolehlivější cesta
+### 2.6 Nejspolehlivější cesta
 kód: **RELCONN**
 
 Máme rozlehlou počítačovou síť, která je realizována rádiovým spojením. Rádiové spojení může být nejrůznějším
