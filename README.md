@@ -18,13 +18,13 @@ Na výstupu bude **N** řádků, pro každý dotaz jeden. Výsledek jednoho dota
 nalezené nejspolehlivější cesty včetně počátečního a koncového ze zadání dotazu. V případě, že žádná cesta (byť
 s minimální spolehlivostí) pro dotaz neexistuje, vypíše se pouze index počátečního uzlu ze zadání dotazu.
 
-Příklad vstupu:
-3 3
-0 1 0.8
-0 2 0.5
-1 2 0.7
-1
-0 2
-
-Očekávaný výstup:
-0 1 2
+Příklad vstupu:  
+3 3  
+0 1 0.8  
+0 2 0.5  
+1 2 0.7  
+1  
+0 2  
+  
+Očekávaný výstup:  
+0 1 2  
