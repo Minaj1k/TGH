@@ -33,6 +33,6 @@ s minimální spolehlivostí) pro dotaz neexistuje, vypíše se pouze index poč
   
 0 1 2  
   
-Ostatní zadání najdeš na : [TGH zadání](http://atrey.karlin.mff.cuni.cz/~morf/vyuka/tgh/tgh_prace.pdf "TGH zadání")  
-Testovací server: [TestServer](https://tgh.nti.tul.cz/ "Testovací server")
+Ostatní zadání najdeš [zde](http://atrey.karlin.mff.cuni.cz/~morf/vyuka/tgh/tgh_prace.pdf "TGH zadání")  
+Odkaz na [testovací server](https://tgh.nti.tul.cz/ "Testovací server")
 
