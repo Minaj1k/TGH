@@ -80,6 +80,7 @@ public class main {
                 if (!((Vrchol)graf.get(ids)).isVisited()){
                     if (!((Vrchol)graf.get(ids)).isAdded()){
                         nextVisit.add(graf.get(ids));
+                        ((Vrchol)graf.get(ids)).setAdded(true);
                     }
                     if (((Vrchol)graf.get(ids)).getHodnota() < (((Hrana)curr.getSoused().get(x)).getP()*pp)){
                         ((Vrchol)graf.get(ids)).setHodnota(((Hrana)curr.getSoused().get(x)).getP()*pp);
