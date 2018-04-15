@@ -1,7 +1,7 @@
 # Teorige grafů a her 2018
 
 ## Zadání
-### 2.6 Nejspolehlivější cesta
+### 6 Nejspolehlivější cesta
 kód: **RELCONN**
 
 Máme rozlehlou počítačovou síť, která je realizována rádiovým spojením. Rádiové spojení může být nejrůznějším
@@ -32,3 +32,7 @@ s minimální spolehlivostí) pro dotaz neexistuje, vypíše se pouze index poč
 **Očekávaný výstup:**  
   
 0 1 2  
+  
+Ostatní zadání najdeš na : [TGH zadání](http://atrey.karlin.mff.cuni.cz/~morf/vyuka/tgh/tgh_prace.pdf "TGH zadání")  
+Testovací server: [TestServer](https://tgh.nti.tul.cz/ "Testovací server")
+
