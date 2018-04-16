@@ -6,49 +6,39 @@ import java.util.Comparator;
 import java.io.*;
 
 public class main {
-    private static Vrchol[] graf;
-    private static Dotaz[] dotazy;
+    private static ArrayList graf;
+    private static ArrayList dotazy;
     private static String[] line;
-    private static Comparator c;
 
     private static int n, m, N;
 
 
     public static void main(String[] args) throws IOException {
-        // Input Buffer
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         
-        // Proměnné vytvořené v rámci optimalizace
+        graf = new ArrayList();
+        dotazy = new ArrayList();
+        
         float p;
         Dotaz dotaz;
         Vrchol va;
         Vrchol vb;
         
-        // Vytvoření nového comparatoru pro budoucí seřazení pole
-        c = new Comparator() {
-            public int compare(Object o1, Object o2) {
-                Float o1h = ((Vrchol)o1).getHodnota();
-                Float o2h = ((Vrchol)o2).getHodnota();
-                return o1h > o2h ? -1 : (o1h < o2h) ? 1 : 0;
-            }
-        };
-        
         // Načti počet vrcholů (n) a hran (m)
         line = in.readLine().split(" ");
         n = Integer.parseInt(line[0]);
         m = Integer.parseInt(line[1]);
-        
+
         // Vytvoř a vlož vrcholy do grafu
-        graf = new Vrchol[n];
         for (int i = 0; i < n; i++){
-            graf[i] = new Vrchol(i);
+            graf.add(new Vrchol(i));
         }
 
         // Načti hrany - z (a), do (b), pravděpodobnost (p) - a vlož je daným vrcholům do pole "soused"
         for (int i = 0; i < m; i++){
             line = in.readLine().split(" ");
-            va = graf[Integer.parseInt(line[0])];
-            vb = graf[Integer.parseInt(line[1])];
+            va = (Vrchol)graf.get(Integer.parseInt(line[0]));
+            vb = (Vrchol)graf.get(Integer.parseInt(line[1]));
             p = Float.parseFloat(line[2]);
             
             va.setSoused(new Hrana(vb.getId(), p));
@@ -60,50 +50,49 @@ public class main {
         N = Integer.parseInt(line[0]);
         
         // Načti konkrétní dotazy - z, do
-        dotazy = new Dotaz[N];
         for (int i = 0; i < N; i++){
             line = in.readLine().split(" ");
-            dotazy[i] = new Dotaz(Integer.parseInt(line[0]), Integer.parseInt(line[1]));
+            dotazy.add(new Dotaz(Integer.parseInt(line[0]), Integer.parseInt(line[1])));
         }
-        
-        // Pro každý dotaz spusť Dijkstrův algoritmus (upravený) a vypiš cestu ze startovního do cílového vrcholu
-        for (int i = 0; i < N; i++){
-            dotaz = dotazy[i];
-            DijkstruvAlgoritmus(dotaz.getI(), dotaz.getJ());
+
+        // Pro každý dotaz spusť Djikstrův algoritmus (upravený) a vypiš cestu ze startovního vrcholu do cílového vrcholu
+        for (int i = 0; i < dotazy.size(); i++){
+            dotaz = (Dotaz)dotazy.get(i);
+            DjikstruvAlgoritmus(dotaz.getI(), dotaz.getJ());
         }
     }
 
-    private static void DijkstruvAlgoritmus(int i, int j) {
+    private static void DjikstruvAlgoritmus(int i, int j) {
         float pp;       // Pravděpodobnost předka
-        Vrchol curr = graf[i];    // Nejdříve startovní vrchol, poté vrchol s největší pravděpodobností => první v pořádníku
+        Vrchol curr = (Vrchol)graf.get(i);    // Nejdříve startovní vrchol, poté vrchol s největší pravděpodobností => první v pořádníku
         Vrchol soused;  // Sousední vrchol
         Hrana hrana;    // Hrana k sousednímu vrcholu
-        ArrayList cesta = new ArrayList();  // List pro finální vypsání hledané cesty
-        ArrayList nextVisit = new ArrayList();  // Pořadník
+        ArrayList cesta = new ArrayList();
+        ArrayList nextVisit = new ArrayList();
         
-        // Nastav všem vrcholům v grafu defaultní nastavení (hodnota = -1, předek = -1, navštíven = false, v pořadníku = false)
-        for (int x = 0; x < n; x++){  
-            graf[x].setDefault();
+        // Nastav všem vrcholům v grafu defaultní nastavení (předek, navštíven, v pořadníku)
+        for (int x = 0; x < graf.size(); x++){  
+            ((Vrchol)graf.get(x)).setDefault();
         }
 
-        // Vlož startovní vrchol do pořadníku
+        // Vymaž pořadník a vlož startovní vrchol do pořadníku
         nextVisit.add(curr);
 
-        // Nastav startovnímu vrcholu hodnotu 1 a předka jako sebe samého
+        // Nastav startovnímu vrcholu hodnotu a předka
         curr.setHodnota(1);    
         curr.setPredek(curr.getId());
 
-        // Hledej nejspolehlivější cestu v grafu, dokud není pořadník prázdný
+        // Najdi nejkratší cestu v grafu
         while (!nextVisit.isEmpty()){
-            Collections.sort(nextVisit, c); // Seřaď pořadník podle hodnoty vrcholu
-            curr = (Vrchol)nextVisit.remove(0); // Vyjmi vrchol s nejlepší pravděpodobností/hodnotou (první v pořadníku)
-            pp = curr.getHodnota(); // Ulož pravděpodobnost/hodnotu vrcholu
+            sortujPodleP(nextVisit);    // Seřaď pořadník podle hodnoty vrcholu
+            curr = (Vrchol)nextVisit.remove(0); // Vyjmi vrchol s nejlepší pravděpodobností (první v pořadníku)
+            pp = curr.getHodnota(); // Ulož hodnotu vrcholu
             curr.setVisited(true);  // Nastav vrcholu status "navštívený"
             
             // Vyhledej všechny sousedy vrcholu
             for (int x = 0; x < curr.getSoused().size(); x++){
-                hrana = (Hrana)curr.getSoused().get(x); // Hrana k sousednímu vrcholu
-                soused = graf[(int)hrana.getId()];  // Sousední vrchol
+                hrana = (Hrana)curr.getSoused().get(x);
+                soused = (Vrchol)graf.get(hrana.getId());                
                 
                 // Pokračuj pokud sousední vrchol NEBYL navštíven
                 if (!soused.isVisited()){
@@ -112,7 +101,7 @@ public class main {
                         nextVisit.add(soused);
                         soused.setAdded(true);
                     }
-                    // Pokud je cesta k sousednímu vrcholu spolehlivější skrz momentálně navštívený vrchol (curr), nastav mu novou hodnotu a předka
+                    // Pokud je cesta k sousednímu vrcholu spolehlivější skrz momentálně navštívený vrchol, nastav mu novou hodnotu a předka
                     if (soused.getHodnota() < hrana.getP()*pp){
                         soused.setHodnota(hrana.getP()*pp);
                         soused.setPredek(curr.getId());
@@ -121,23 +110,29 @@ public class main {
             }
         }
 
-        // Vlož cílový vrchol a zapisuj předky, dokud nedojdeš ke startovacímu vrcholu
-        curr = graf[j];
-        if (curr.getPredek() == -1){    // Pokud nemá cílový vrchol předka, nevede k němu žádná cesta => zapiš pouze startovní vrchol
+        // Vymaž cestu, vlož cílový vrchol a postupně do pole přidávej předky
+        curr = ((Vrchol)graf.get(j));
+        if (curr.getPredek() == -1){
             cesta.add(i);
-        } else {    // Cílový vrchol má předka, cesta byla nalezena
+        } else {
             cesta.add(j);
-            while(curr.getPredek() != curr.getId()){ // Zapisuj předky, dokud nenarazíš na startovní vrchol (ten, který má sám sebe jako předka)
+            while(curr.getPredek() != curr.getId()){
                 cesta.add(0, curr.getPredek());
-                curr = graf[curr.getPredek()];
+                curr = ((Vrchol)graf.get(curr.getPredek()));
             }
         }
-        
-        // Vypiš cestu :)
         for(int x = 0; x < cesta.size(); x++){
             System.out.print(cesta.get(x)+" ");
         }
         System.out.println();
+    }
+
+    private static void sortujPodleP(ArrayList List) {
+        Collections.sort(List, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                return ((Vrchol)o1).getHodnota() > ((Vrchol)o2).getHodnota() ? -1 : (((Vrchol)o1).getHodnota() < ((Vrchol)o2).getHodnota()) ? 1 : 0;
+            }
+        });
     }
 }
 
@@ -226,8 +221,8 @@ class Hrana {
 }
 
 class Dotaz {
-    private int i;      // Startovní vrchol
-    private int j;      // Cílový vrchol
+    private int i;      // počáteční uzel
+    private int j;      // koncový uzel
 
     public Dotaz(int i, int j) {
         this.i = i;
